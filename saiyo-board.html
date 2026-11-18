@@ -390,6 +390,26 @@ body.locked .wrap,body.locked dialog{display:none!important}
         <div class="f" style="margin-top:12px"><label for="memo">共有メモ</label><textarea id="memo" placeholder="チームで共有したいこと（評価は下の「面接評価」へ）"></textarea></div>
       </fieldset>
       <fieldset>
+        <legend>給与条件</legend>
+        <div class="box" id="salLocked">
+          <p class="small muted" style="margin:0 0 8px">給与条件を見るには、給与の合言葉を入れてください。この応募者の詳細を閉じると、また隠れます。</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="salPass" type="password" inputmode="numeric" autocomplete="off" class="inp" style="max-width:180px;letter-spacing:.3em;text-align:center" aria-label="給与の合言葉">
+            <button class="btn small primary" type="button" id="salOpen">🔒 給与条件を見る</button>
+          </div>
+          <div class="err" id="salErr" role="alert"></div>
+        </div>
+        <div id="salOpenBox" hidden>
+          <div class="grid">
+            <div class="f"><label for="salCurrent">現在の給与</label><input id="salCurrent" autocomplete="off" placeholder="例：月給28万円"></div>
+            <div class="f"><label for="salDesired">希望の給与</label><input id="salDesired" autocomplete="off" placeholder="例：月給30万円以上"></div>
+            <div class="f"><label for="salOffer">提示する給与</label><input id="salOffer" autocomplete="off" placeholder="例：年収450万円"></div>
+            <div class="f full"><label for="salMemo">給与のメモ</label><textarea id="salMemo" style="min-height:70px" placeholder="手当・賞与・交渉の経緯など"></textarea></div>
+          </div>
+          <p class="hint" id="salNote">「保存する」を押すと、ほかの項目と一緒に保存されます。</p>
+        </div>
+      </fieldset>
+      <fieldset>
         <legend>面接日程</legend>
         <div id="roundsBox"></div>
         <p class="hint" id="calNote"></p>
@@ -539,7 +559,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
   ];
   const FLOW = ['doc','first','final','offer'];
   const ROUNDS = [{k:'first',label:'一次面接'},{k:'final',label:'最終面接'}];
-  const SOURCES = ['求人サイト','自社サイト','エージェント','社員紹介','SNS','その他'];
+  const SOURCES = ['求人サイト','インディード','ハローワーク','自社サイト','エージェント','社員紹介','SNS','その他'];
   const JOB_ST = [
     {k:'prep',label:'準備中',c:'var(--s-doc)'},
     {k:'open',label:'募集中',c:'var(--s-offer)'},
@@ -1316,6 +1336,68 @@ body.locked .wrap,body.locked dialog{display:none!important}
     return d.length === 7 ? d.slice(0,3) + '-' + d.slice(3) : t;
   }
 
+  // ---------- salary (behind a second passphrase; stored apart in salaries/{applicantId}) ----------
+  // Client-side gate only (see README 20-2): anyone who can open the board can technically read salaries/.
+  const SAL_HASH = 'd35fa29f63bbeb69caf40f6fb30d8dbaab1de1d06c43dfb6e3a64edd38eb89bb';
+  const SAL_FAIL_KEY = 'saiyo-board-salary-fails';
+  const SAL_FIELDS = [['current','salCurrent'],['desired','salDesired'],['offer','salOffer'],['memo','salMemo']];
+  let salOpen = false, salLoaded = null, salFails = 0, salUntil = 0, salTimer = null;
+  const localSal = {};
+  try { const f = JSON.parse(sessionStorage.getItem(SAL_FAIL_KEY) || '{}'); salFails = f.n || 0; salUntil = f.until || 0; } catch(e){}
+  function salSaveFails(){ try { sessionStorage.setItem(SAL_FAIL_KEY, JSON.stringify({n:salFails, until:salUntil})); } catch(e){} }
+  function salMsg(m){ const e = $('salErr'); e.textContent = m || ''; e.classList.toggle('show', !!m); }
+  function salLock(){
+    salOpen = false; salLoaded = null; clearInterval(salTimer);
+    SAL_FIELDS.forEach(([,id]) => { $(id).value = ''; });
+    $('salOpenBox').hidden = true; $('salLocked').hidden = false; $('salPass').value = ''; salMsg('');
+    if(salUntil > Date.now()) salWait(); else { $('salPass').disabled = false; $('salOpen').disabled = false; }
+  }
+  function salWait(){
+    clearInterval(salTimer);
+    const tick = () => {
+      const left = Math.ceil((salUntil - Date.now())/1000);
+      if(left <= 0){ clearInterval(salTimer); salUntil = 0; salFails = 0; salSaveFails(); $('salPass').disabled = false; $('salOpen').disabled = false; salMsg(''); return; }
+      $('salPass').disabled = true; $('salOpen').disabled = true;
+      salMsg('5回続けて間違えたため、あと'+left+'秒は入力できません。');
+    };
+    tick(); salTimer = setInterval(tick, 1000);
+  }
+  async function salUnlock(){
+    if(salUntil > Date.now()){ salWait(); return; }
+    const v = $('salPass').value.trim();
+    if(!v){ salMsg('給与の合言葉を入力してください。'); return; }
+    let h = ''; try { h = await sha256('saiyo-board-salary:' + v); } catch(e){ salMsg('この環境では合言葉を確認できません。'); return; }
+    if(h !== SAL_HASH){
+      salFails++; $('salPass').value = '';
+      if(salFails >= 5){ salUntil = Date.now() + 60000; salSaveFails(); salWait(); return; }
+      salSaveFails(); salMsg('合言葉が違います。（あと'+(5-salFails)+'回間違えると、1分間入力できなくなります）'); return;
+    }
+    salFails = 0; salUntil = 0; salSaveFails();
+    const forId = S.editing;
+    let data = {};
+    if(forId){
+      if(db && !localMode){
+        try { const snap = await db.doc('salaries/' + forId).get(); data = snap.exists ? (snap.data() || {}) : {}; }
+        catch(e){ salMsg('給与条件を読み込めませんでした。もう一度お試しください。'); return; }
+      } else data = localSal[forId] || {};
+    }
+    if(S.editing !== forId || !dlg.open) return;
+    salLoaded = {}; SAL_FIELDS.forEach(([k,id]) => { salLoaded[k] = data[k] || ''; $(id).value = salLoaded[k]; $(id).disabled = S.readOnly; });
+    salOpen = true; $('salLocked').hidden = true; $('salOpenBox').hidden = false;
+    $('salNote').textContent = S.readOnly ? '閲覧のみのため、書き換えはできません。' : '「保存する」を押すと、ほかの項目と一緒に保存されます。';
+  }
+  $('salOpen').addEventListener('click', salUnlock);
+  $('salPass').addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); salUnlock(); } });
+  async function salPersist(id){
+    if(!salOpen || S.readOnly) return true;
+    const body = {}; let changed = false;
+    SAL_FIELDS.forEach(([k,fid]) => { body[k] = $(fid).value.trim(); if(body[k] !== (salLoaded ? salLoaded[k] : '')) changed = true; });
+    if(!changed) return true;
+    body.updatedAt = Date.now(); if(myId) body.updatedBy = myId;
+    if(!db || localMode){ localSal[id] = body; return true; }
+    try { await db.doc('salaries/' + id).set(body); return true; } catch(e){ writeError(e); return false; }
+  }
+
   // ---------- birth date -> age ----------
   function paintAge(a){
     const v = $('birthDate').value, el = $('ageView');
@@ -1355,6 +1437,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
     $('memo').value = a ? a.memo||'' : (p.memo||'');
     formStage = a ? (a.stage||'doc') : (S.fStage && S.fStage!=='out' ? S.fStage : 'doc');
     paintStagePick();
+    salLock();
     formRounds = roundsOf(a); calBusy = {};
     paintRounds();
     formRev = {};
@@ -1370,6 +1453,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
     resetDel();
     $('saveBtn').hidden = S.readOnly;
     dlg.querySelectorAll('.body > fieldset input:not([type=file]), .body > fieldset select, .body > fieldset textarea').forEach(el => { if(!el.closest('#revBox')) el.disabled = S.readOnly; });
+    if(!(salUntil > Date.now())){ $('salPass').disabled = false; $('salOpen').disabled = false; }
     const lu = $('lastUpd');
     lu.innerHTML = a && a.updatedAt ? '最終更新：'+fmtDT(a.updatedAt)+(a.updatedBy?'（<span data-uid="'+esc(a.updatedBy)+'"></span>）':'') : '';
     resolveNames(lu);
@@ -1381,7 +1465,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
     if(!S.editing && formAtt.length && assets) formAtt.forEach(f => assets.delete(f.id).catch(()=>{}));
     formAtt = [];
     if(dlg.open) dlg.close();
-    S.editing = null; resetDel();
+    S.editing = null; resetDel(); salLock();
   }
   function resetDel(){ clearTimeout(delTimer); const b=$('delBtn'); b.classList.remove('armed'); b.textContent='削除'; }
   dlg.addEventListener('cancel', e => { e.preventDefault(); closeForm(); });
@@ -1392,6 +1476,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
     const id = S.editing, files = formAtt.slice(); formAtt = [];
     if(dlg.open) dlg.close(); S.editing = null; resetDel();
     if(id && await deleteDoc('applicants', id)){
+      if(db && !localMode) db.doc('salaries/' + id).delete().catch(()=>{}); else delete localSal[id];
       if(assets) files.forEach(f => assets.delete(f.id).catch(()=>{}));
       if(myId && db && !localMode){ const items = Object.assign({}, myItems()); let ch = false; Object.keys(items).forEach(k => { if(k.startsWith(id+'__')){ delete items[k]; ch = true; } }); if(ch) db.doc('reviews/'+myId).set({items, updatedAt:Date.now()}).catch(()=>{}); }
     }
@@ -1440,7 +1525,8 @@ body.locked .wrap,body.locked dialog{display:none!important}
     };
     const id = S.editing || newId('applicants');
     $('saveBtn').disabled = true;
-    const ok = await saveApplicant(id, data);
+    let ok = await saveApplicant(id, data);
+    if(ok) ok = await salPersist(id);
     $('saveBtn').disabled = false;
     if(ok){ formAtt = []; closeForm(); banner(''); }
   });

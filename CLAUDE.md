@@ -17,7 +17,7 @@
 | 公開URL | https://claude.ai/artifact/AE2iaCbyZVzkDoYA3T28Ep |
 | ソース | `saiyo-board.html`（HTML・CSS・JavaScript を1ファイルにまとめる） |
 | 要件定義 | `README.md` |
-| 現在の状態 | 第1版を公開済み。第2版は `saiyo-board.html` に実装済み（ローカルの擬似データで確認済み）。公開ページへの反映と、claude.ai 上での確認はまだ（README.md の24-10・25章） |
+| 現在の状態 | 第1版を公開済み。第2版は README.md の23章の内容で、依頼者の「OK」待ち（README.md の25章） |
 | 依頼者 | 社内の採用担当。エンジニアではない |
 | 使う人 | 採用担当者（作成者＋編集者）とメンバー（Contributor）。社外の人は使わない |
 
@@ -77,7 +77,7 @@ claude.ai に公開するページには、次の制約があります。守ら�
 | assets | 応募書類の保存 | `{"upload":"interact"}` | メンバーが添付したファイルは、絶対にスクリプト・スタイル・HTMLとして読み込まない（表示とリンクだけ）。保存するのは id。表示は `"/_blob/" + id` |
 | mcp | Googleカレンダー連携 | `{"servers":[{"server":"Google Calendar","tools":["suggest_time","create_event"]}]}` | エラーはコードごとに直し方を表示する（ひとまとめにしない）。書き込み（create_event）は自動で再試行しない |
 | sample | エージェントのメールの読み取り | `{}` | `sample.json()` を使う。ボタンを押したときだけ呼ぶ。失敗しても自動で再試行しない |
-| downloads | CSVの書き出し【第2版で実装済み。公開時に宣言を足す】 | `true` | 依頼者の操作があったときだけ使う |
+| downloads | CSVの書き出し【第2版で追加予定】 | `true` | 依頼者の操作があったときだけ使う |
 
 ### 5-1. 確認済みのGoogleカレンダーの動き
 
@@ -101,20 +101,15 @@ claude.ai に公開するページには、次の制約があります。守ら�
     {"path": "reviews/{self}", "read": "interact", "write": "interact"},
     {"path": "members", "read": "interact", "write": "admin"},
     {"path": "members/{self}", "read": "interact", "write": "interact"},
-    {"path": "mailLogs", "read": "admin", "write": "admin"},
-    {"path": "mailLogs/{self}", "read": "interact", "write": "interact"},
-    {"path": "archive", "read": "admin", "write": "admin"},
     {"path": "templates", "write": "admin"},
     {"path": "settings", "write": "admin"}
   ]},
   "mcp": {"servers": [{"server": "Google Calendar", "tools": ["suggest_time", "create_event"]}]},
-  "downloads": true,
   "sample": {},
   "user": {"scopes": ["profile"]}
 }
 ```
 
-- 上のうち、`mailLogs`・`archive` のルールと `downloads` は第2版で足した分で、まだ公開していない（公開ページは第1版の宣言のまま）。第2版を公開するときは、この全体を渡す。
 - **公開し直すときに capabilities を渡すと、全部の置き換えになる。** 一部だけ書くと、書かなかった機能は外れる。変更しないときは capabilities を省略する（前の設定がそのまま残る）。第2版で機能を足すときは、上の全体に追加して渡す。
 - `{self}` のルールを書くときは、その親の場所（例：`reviews`）に `read` と `write` の両方を書く。書かないと公開が拒否される。
 - 採用担当者＝`admin`（共有メニューの編集者とオーナー）、メンバー＝`interact`（Contributor）、閲覧のみ＝`view`。
@@ -158,22 +153,9 @@ claude.ai に公開するページには、次の制約があります。守ら�
 ### 7-3. 見た目の決まり
 
 - 文字は丸ゴシック（M PLUS Rounded 1c）1種類。
-- 色は変数で管理（`--primary` ティール、`--s-doc` 青、`--s-first` 紫、`--s-final` オレンジ、`--s-offer` 緑、`--s-out` 灰）。二次面接 `--s-second`（#0A9BBA／暗 #38C9E0）、入社 `--s-joined`（#B8890B／暗 #E5BE45）は決定済み（README.md の24-9）。
+- 色は変数で管理（`--primary` ティール、`--s-doc` 青、`--s-first` 紫、`--s-final` オレンジ、`--s-offer` 緑、`--s-out` 灰）。第2版の二次面接・入社の色は未決定（README.md の25章）。
 - 選考の進み具合を点の列で表す表示（`trackHTML()`）が、このボードの特徴。段階を増やすときは、`FLOW` と `STAGES` の両方を直す。
 - 画面の文言は、何が起きるかがわかる動詞にする（「保存する」「Googleカレンダーに登録」など）。エラーは謝らず、何が起きたかと直し方を書く。
-
-### 7-4. これから作る画面も、いまのデザインに合わせる（依頼者の指示）
-
-新しい画面や、新しい部分（タブ、窓、一覧、カード、ボタンなど）を足すときは、**いまの `saiyo-board.html` のデザインに合わせる。** 勝手に新しい見た目を作らない。
-
-- **合わせる元：** いまのページの見た目（第1版の部品と、第2版で取り入れた「ボード」のデザイン〔案A〕）。新しい部分を作る前に、似た部品がすでにあるか探して、あればそれを使う。
-- **色：** `:root` の変数だけを使う（`--primary`、`--surface`、`--line`、`--muted`、`--s-doc`・`--s-first`・`--s-second`・`--s-final`・`--s-offer`・`--s-joined`・`--s-out`、`--soon`、`--warn`、`--del` など）。色の値を直接書かない。明るい表示と暗い表示の両方で確かめる。
-- **書体：** 丸ゴシック（M PLUS Rounded 1c）のまま。Claude Design の見本の書体は、取り入れない。
-- **部品：** 札（`.pill`・`.tag`・`.flag`）、ボタン（`.btn`）、枠（`.panel`・`.spanel`・`.box`）、お知らせ（`.notice`）、段階ボタン（`.chip`）、選択のボタン（`.stagepick`）、星（`.rate`）、窓（`<dialog>`）を、そのまま使う。丸い角、うすい線、うすい影の雰囲気をそろえる。
-- **選考段階の見せ方：** 段階の名前・色・点の列は、`STAGES`・`FLOW`・`trackHTML()` を使う。色を別につけない。
-- **スマホ：** 幅が狭いときは1列に積む（ボードと同じ考え方）。横にはみ出さない。
-- **Claude Design の見本が届いたとき：** そちらの見た目を優先して、いまのデザインと合わせて作り直す。ただし、書体は変えず、色は変数にする。見本のページは、そのまま使わず、見た目と配置の参考にする。
-- 合わせにくいときや、いまのデザインにない種類の部品が必要なときは、勝手に決めずに、依頼者に聞く。
 
 ---
 
@@ -206,7 +188,6 @@ claude.ai に公開するページには、次の制約があります。守ら�
 5. 「応募者の削除は採用担当者だけ」は画面上の制限にすぎない。データの仕組みで守っていると説明しない。
 6. 新規登録を保存せずに閉じたときは、その間に添付したファイルを消す。保存した場合は消さない（保存後に `formAtt = []` にしてから閉じている）。
 7. 第1版より前のデータ（`interviewAt`、`position`、`rating`）が残っている可能性がある。`roundsOf()` と `jobLabel()` で読み替えている。この読み替えを消さない。
-8. **「どこまで進んだか」は、段階の名前（`reachedKey`）で保存する。** 第1版は数字（`reached`）だけで、二次面接を足すと1つずつずれる。`reachedOf()` が、名前がなければ第1版の並び（`OLD_FLOW`）で読み替えている。この読み替えを消さない。
 
 ---
 
@@ -224,3 +205,258 @@ README.md の25章に13項目あります。**これらが決まるまで、関�
 - 機能やアクセスルールを変えたとき（5章・6章）
 - Googleカレンダーの予定登録の結果がわかったとき（5-1）
 - 新しい間違いや注意点が見つかったとき（9章）
+
+---
+
+## 12. GitHub への登録（非公開）の手順
+
+依頼者が1人で GitHub にファイルを上げるときの手順です。2026年10月20日に、実際にこの流れで登録しました。会社のパソコンでは管理者の権限が要るソフトを入れられないため、**ブラウザーだけで行う方法**を基本にしています。
+
+GitHub の画面は、日本語で表示されることも、英語で表示されることもあります。そのため、ボタンの名前は「日本語（英語）」の両方を書いています。
+
+### 12-1. 登録先
+
+| 項目 | 内容 |
+|---|---|
+| リポジトリのURL | https://github.com/mitsuo-tsuji/saiyo-board |
+| ファイルを上げる画面のURL | https://github.com/mitsuo-tsuji/saiyo-board/upload |
+| 設定の画面のURL | https://github.com/mitsuo-tsuji/saiyo-board/settings |
+| 公開の設定 | 非公開（Private）。依頼者と、依頼者が招待した人だけが見られる |
+| ブランチ | main |
+| 入れているファイル | README.md、CLAUDE.md、saiyo-board.html の3つ |
+| 手元のフォルダー | `C:\Users\tsuji\Desktop\claude研修\第07回` |
+
+### 12-2. ファイルを直したときの上げ方（ふだんはこれだけ）
+
+リポジトリはもう作ってあるので、ふだんはこの手順だけで済みます。
+
+1. ブラウザーで https://github.com/mitsuo-tsuji/saiyo-board/upload を開く。
+2. エクスプローラーで `C:\Users\tsuji\Desktop\claude研修\第07回` を開く。
+3. 直したファイルを選び、ブラウザーの「ファイルをここにドラッグしてリポジトリに追加します（Drag files here to add them to your repository）」と書かれた枠の中にドラッグする。直していないファイルは置かなくてよい。
+4. 枠の下に、置いたファイルの名前が並んだことを確認する。
+5. 画面を下にスクロールし、「変更をコミットする（Commit changes）」の欄の1行目に、何を直したかを短く書く（例：「README.md に要件を1つ追加」）。空欄でも登録はできる。
+6. 「main ブランチに直接コミットする（Commit directly to the main branch）」が選ばれていることを確認する。
+7. **いちばん下の緑色の「変更をコミットする（Commit changes）」ボタンを押す。** ← これを押すまで、GitHub には保存されない。
+8. https://github.com/mitsuo-tsuji/saiyo-board を開き、12-5の確認をする。
+
+同じ名前のファイルは、新しいものに置き換わります。前の版は履歴として残るので、あとから見比べたり戻したりできます。
+
+### 12-3. 新しくリポジトリを作るとき（別のフォルダーを上げたいとき）
+
+**順番が大切です。必ず「非公開で作る → ファイルを入れる」の順にしてください。** 公開のまま先にファイルを入れると、そのあいだ中身がだれでも見られる状態になります。
+
+1. https://github.com/new を開く。
+2. 「リポジトリ名（Repository name）」に名前を入れる。
+   - **日本語入力をオフ（半角英数）にしてから入力する。** 日本語入力がオンのままだと、「saiyo-board」が「asaiyo-boardさ」のように崩れることがある（実際に起きた）。
+   - 入力後、欄の下に緑色で「◯◯ is available（使える名前です）」と出ればよい。赤色で「already exists（すでにあります）」と出たら、別の名前にする。
+3. 「表示設定を選択（Choose visibility）」のボタンを押し、**「非公開（Private）」を選ぶ。** ボタンの表示が「Private」に変わったことを必ず確認する。
+4. 「README を追加（Add README）」は**オフのまま**にする。手元の README.md と重なるため。
+5. 「.gitignore」と「ライセンス（license）」も、なしのままでよい。
+6. 緑色の「リポジトリを作成（Create repository）」を押す。
+7. 名前の横に「非公開（Private）」と出ていることを確認する。
+8. 画面の「既存のファイルをアップロード（uploading an existing file）」のリンクを押す。
+9. ここからは、12-2の2〜8と同じ手順でファイルを入れる。
+
+### 12-4. 公開・非公開を切り替えるとき
+
+1. 設定の画面（https://github.com/mitsuo-tsuji/saiyo-board/settings）を開く。
+2. いちばん下の「危険地帯（Danger Zone）」までスクロールする。
+3. 「リポジトリの可視性を変更する（Change repository visibility）」の右にある「表示設定を変更する（Change visibility）」を押す。
+4. 出てきた小さなメニューで、「非公開に変更（Change to private）」または「公開に変更（Change to public）」を押す。
+5. 確認の窓が出るので、次の順に3回ボタンを押す。窓の中のボタンが、押すたびに変わる。
+   1. 「このリポジトリを非公開にしたい（I want to make this repository private）」
+   2. 「私はこれらの効果を読み、理解しました（I have read and understand these effects）」
+   3. 「このリポジトリを非公開にする（Make this repository private）」
+   （公開にするときは、それぞれ「公開」の言葉になる）
+6. 「危険地帯（Danger Zone）」の欄に「このリポジトリは現在非公開です（This repository is currently private）」と出ていれば完了。
+
+公開にすると、世界中のだれでも中身を読めるようになります。README.md には社内の採用の進め方や、採用ボードの公開ページのリンクが書いてあるため、公開する前に社内のルールを確認してください。
+
+### 12-5. 上げたあとに確認すること
+
+https://github.com/mitsuo-tsuji/saiyo-board を開いて、次の4つを確認します。
+
+| 確認すること | 見る場所 |
+|---|---|
+| 非公開になっているか | リポジトリ名「saiyo-board」の横に「非公開（Private）」と出ている |
+| ファイルがそろっているか | ファイルの一覧に、上げたファイルが並んでいる |
+| 新しい版が入っているか | 一覧の右側の時刻が「◯ minutes ago（◯分前）」になっている。README.md は画面の下に中身が表示されるので、最初の「最終更新」の日付も見る |
+| 登録の記録が増えたか | ファイル一覧の上の「◯ Commits（◯件のコミット）」の数が1つ増えている |
+
+### 12-6. つまずきやすいところ
+
+| 起きること | 原因 | どうするか |
+|---|---|---|
+| ファイルを置いたのに、リポジトリが空のまま | 「変更をコミットする（Commit changes）」の緑のボタンを押していない | ファイルを置いたタブに戻り、下にスクロールして緑のボタンを押す。タブを閉じたり開き直したりすると、置いたファイルは消えるので、もう一度置き直す |
+| リポジトリ名が「asaiyo-boardさ」のように崩れる | 日本語入力がオンのまま入力した | 欄の文字を全部消し、日本語入力をオフにしてから入れ直す |
+| 公開・非公開のボタンを押しても何も変わらない | ブラウザーの画面が固まっている | ページを開き直す（F5キー）か、新しいタブで設定の画面を開き直して、12-4を最初からやり直す |
+| ボタンの名前がこの手順と違う | GitHub の画面の言語が日本語と英語で切り替わっている | この手順の（ ）の中の英語の名前で探す |
+| GitHub の画面に出ているコマンド（`echo "# saiyo-board" >> README.md` で始まるもの）を打ちたくなる | 空のフォルダーから始める人向けのコマンドが表示されている | **打たない。** README.md の最後に余計な1行が付き、ほかの2つのファイルも上がらない。コマンドを使う場合は12-7のものを使う |
+
+### 12-7. コマンドで上げる場合（Git が入っているときだけ）
+
+ブラウザーの方法で困らなければ、この方法は使わなくてかまいません。
+
+1. エクスプローラーで `C:\Users\tsuji\Desktop\claude研修\第07回` を開き、上のアドレス欄に `cmd` と入れて Enter を押す。
+2. `git --version` と打つ。「git version 2.◯◯」と出れば Git が入っている。「認識されていません」と出たら、この方法は使えないので12-2の方法にする。
+3. 初めて上げるときだけ、次を1行ずつ打つ。
+
+```
+git init
+git add README.md CLAUDE.md saiyo-board.html
+git commit -m "採用ボード：要件定義書・指示書・第1版を登録"
+git branch -M main
+git remote add origin https://github.com/mitsuo-tsuji/saiyo-board.git
+git push -u origin main
+```
+
+4. 2回目からは、直したファイルを次の3行で上げる（2行目の文は、何を直したかに変える）。
+
+```
+git add README.md CLAUDE.md saiyo-board.html
+git commit -m "README.md に要件を1つ追加"
+git push
+```
+
+| 出る表示 | 意味とどうするか |
+|---|---|
+| `Please tell me who you are` | 初めて Git を使うときに出る。`git config --global user.name "辻"` と `git config --global user.email "GitHubのメールアドレス"` を打ってから、`git commit` の行からやり直す |
+| `error: remote origin already exists` | 前に同じ設定をしてある。そのまま次の行に進んでよい |
+| ブラウザーで GitHub のサインイン画面が開く | `git push` のときに出る。サインインして許可すれば続く |
+| `Updates were rejected` | ブラウザーから上げた版の方が新しいため、そのままでは上げられない。自分で直さず、表示をそのまま Claude に貼って相談する |
+
+**ブラウザーとコマンドの両方で上げると、上の `Updates were rejected` が起きやすくなります。どちらか一方に決めて使ってください。**
+
+### 12-8. Claude に手伝ってもらうときの分担
+
+Claude（claude.ai のチャット＋Chrome の拡張機能）に頼む場合、できることとできないことは次のとおりです。
+
+| 作業 | Claude ができるか |
+|---|---|
+| リポジトリを作る、公開・非公開を切り替える | できる（Chrome の拡張機能で操作する） |
+| ファイルを GitHub の画面に置く | **できない。** 依頼者がエクスプローラーからドラッグする |
+| 「変更をコミットする」を押す | 依頼者がファイルを置いたタブには手が届かないため、**依頼者が押す** |
+| 上がったか・非公開かの確認 | できる |
+| 依頼者のパソコンでコマンドを打つ | できない（Claude Code なら、フォルダーを開いて代わりに打てる） |
+
+頼むときは、「ファイルを置く」「緑のボタンを押す」の2つは自分でやる前提で進めてください。
+
+---
+
+## 13. Cloudflare Pages での見本の公開の手順
+
+依頼者が1人で Cloudflare Pages を扱うときの手順です。2026年10月20日に、実際にこの流れで公開しました。Cloudflare の画面も、日本語と英語のどちらで表示されるか分からないため、ボタンの名前は「日本語（英語）」で書いています。
+
+### 13-1. 最初に知っておくこと
+
+- **Cloudflare に置いた採用ボードは「見本」です。** データの保存、チームでの共有、評価の閲覧制限、書類の添付、Googleカレンダー連携、メールの読み取りは動きません（claude.ai の仕組みを使っているため）。チームで実際に使うのは claude.ai の公開ページ（https://claude.ai/artifact/AE2iaCbyZVzkDoYA3T28Ep）です。
+- **実際の応募者の情報は入力しないでください。**
+- **公開ページは、URLを知っていればだれでも見られます。** 自分だけ見られるようにする「Access」は、無料でも支払い方法の登録が必要なため、使わないことに決めました（README.md の26章）。
+
+### 13-2. 公開先
+
+| 項目 | 内容 |
+|---|---|
+| 公開ページのURL | https://saiyo-board.pages.dev/saiyo-board |
+| Cloudflare の管理画面 | https://dash.cloudflare.com にログイン →左のメニューの「Workers & Pages」→「saiyo-board」 |
+| Cloudflare のアカウント | tsuji@sakiyamagumi.com |
+| つながっている GitHub | https://github.com/mitsuo-tsuji/saiyo-board（main ブランチ） |
+| Cloudflare が見られる GitHub のリポジトリ | saiyo-board だけ |
+
+URLの最後の `/saiyo-board` を忘れないでください。ファイル名が `saiyo-board.html` なので、`https://saiyo-board.pages.dev` だけでは「ページが見つかりません」になります。
+
+### 13-3. ふだんの更新のしかた（これだけで済む）
+
+**Cloudflare の画面は触らなくてかまいません。**
+
+1. CLAUDE.md の12-2の手順で、直したファイルを GitHub の saiyo-board に上げる（緑の「変更をコミットする」まで押す）。
+2. 2〜3分待つ。Cloudflare が GitHub の変更に気づいて、自動で公開し直す。
+3. https://saiyo-board.pages.dev/saiyo-board を開き、直した内容になっているか確かめる。古いままなら、F5キーで読み込み直す。
+
+うまく反映されないときは、Cloudflare の管理画面の「saiyo-board」→「デプロイ（Deployments）」を開き、いちばん上の行の「Status」を見ます。緑のチェックなら成功、赤い×なら失敗です。失敗していたら、その行を開いて表示をそのまま Claude に貼って相談してください。
+
+### 13-4. 新しく公開するとき（別のリポジトリを公開したいとき）
+
+1. https://dash.cloudflare.com にログインする。
+2. 左のメニューの「Workers & Pages」を開き、「作成（Create）」を押す。「Pages」の方を選ぶ（「Workers」ではない）。
+3. 「既存の Git リポジトリをインポートする（Import an existing Git repository）」の「始める（Get started）」を押す。
+4. 「GitHub」のタブで「GitHub に接続（Connect GitHub）」を押す。
+5. GitHub の「Cloudflare Workers と Cloudflare Pages が…アクセスを要求しています」の画面で、「承認する（Authorize）」を押す。
+6. 「インストールして承認する（Install & Authorize）」の画面で、**「リポジトリのみを選択（Only select repositories）」を選び**、「リポジトリを選択（Select repositories）」から公開したいリポジトリだけを選ぶ。「すべてのリポジトリ（All repositories）」は選ばない。
+7. 「インストールと認証（Install & Authorize）」を押す。
+8. GitHub のパスワードを聞かれたら（「アクセスを確認してください」）、パスワードを入れて「確認」を押す。
+9. Cloudflare の画面に戻ったら、リポジトリの一覧から公開したいリポジトリを選び、「セットアップの開始（Begin setup）」を押す。
+10. ビルドの設定は、HTML のファイルをそのまま公開するだけなら、何も入れずに「保存してデプロイする（Save and Deploy）」を押す。
+11. 公開が終わると、`リポジトリ名.pages.dev` のURLが表示される。
+12. 13-6の確認をする。
+
+### 13-5. 公開をやめるとき
+
+1. Cloudflare の管理画面の「Workers & Pages」→「saiyo-board」を開く。
+2. 「設定（Settings）」を開き、いちばん下までスクロールする。
+3. 「削除（Delete）」を押し、確認の画面でプロジェクト名を入れて削除する。
+4. GitHub のリポジトリと claude.ai の公開ページは、そのまま残る。
+
+### 13-6. 公開したあとに確認すること
+
+| 確認すること | 見る場所 |
+|---|---|
+| 公開が成功したか | Cloudflare の「saiyo-board」→「デプロイ」の一番上の行が緑のチェック |
+| ページが開けるか | https://saiyo-board.pages.dev/saiyo-board に採用ボードの画面が出る |
+| 見本として動いているか | 画面の上に「この画面ではデータが保存されません」と出ている（これが正常） |
+| 余計なリポジトリが見えていないか | GitHub の「設定（Settings）」→「アプリケーション（Applications）」→「Cloudflare Workers and Pages」の「設定（Configure）」で、選んだリポジトリだけになっている |
+
+### 13-7. つまずきやすいところ（実際に起きたこと）
+
+| 起きること | 原因 | どうするか |
+|---|---|---|
+| 「アカウントを確認」という画面が出て先に進めない | Cloudflare のアカウントのメールアドレスの確認が済んでいない | 受信箱（迷惑メールも）で Cloudflare からのメールを探し、中のリンクを押す。届かなければ画面の「メールを再送」を押す |
+| GitHub のパスワードを入れたのに先に進まない | 別のタブや別の窓でパスワードを入れていた | パスワードを聞いている、そのタブで入れ直す |
+| saiyo-board だけを選んだのに、ほかのリポジトリ（ai-portal・kintai）も Cloudflare に見えている | パスワードの確認の途中で止まり、「すべてのリポジトリ」で保存された | 13-6の4行目の場所で、「リポジトリのみを選択」にして saiyo-board だけを選び、「保存（Save）」を押す |
+| リポジトリの一覧で、選びたいリポジトリに「使用中」と出る | すでにそのリポジトリで Cloudflare のプロジェクトが作られている | 新しく作らず、「Workers & Pages」の一覧から既存のプロジェクトを開く |
+| 「Access」で自分だけ見られるようにしようとすると、カードや PayPal の入力画面が出る | Cloudflare の Zero Trust は、無料のプランでも支払い方法の登録が必要 | 会社のルールを確認する。登録しない場合は、何も入れずに右上の「×」で閉じる（料金は発生しない） |
+| Cloudflare の設定の「プレビューを制限」を押しても、公開ページが守られない | この設定は「プレビュー（試し公開）」のURLだけを守るもので、本番の `pages.dev` のURLは守らない | 本番を守るには Zero Trust の Access が必要（上の行のとおり支払い方法の登録が必要） |
+| `https://saiyo-board.pages.dev` を開くと「ページが見つかりません」 | ファイル名が `index.html` ではないため | URLの最後に `/saiyo-board` を付ける |
+
+### 13-8. Claude に手伝ってもらうときの分担
+
+| 作業 | Claude ができるか |
+|---|---|
+| Cloudflare や GitHub の画面のボタンを押す、設定を選ぶ | できる（Chrome の拡張機能で操作する） |
+| 初めて開くサイトの許可 | **依頼者が押す。** Chrome の右上に小さな「Claude」の窓で「◯◯へのアクセスを許可しますか」と出るので、「許可（Allow）」を押す。1分ほどで消えるので、Chrome の画面を見ながら待つ |
+| メールアドレスの確認のリンクを押す | できない（依頼者のメールを開けないため） |
+| パスワードの入力 | できない。依頼者が入れる |
+| カード番号などの支払いの情報の入力 | できない。依頼者が入れる |
+| GitHub と Cloudflare をつなぐ許可（「承認する」） | 依頼者がはっきり「操作して」と頼んだときだけ、Claude が押す |
+
+**Chrome の画面が固まりやすいので、作業中は Chrome の窓を、このチャットと重ならないように並べて、手前に出しておいてください。** Chrome が後ろに隠れていると、ページの動きが止まり、Claude の操作が効かなくなります。
+
+
+---
+
+## 14. 合言葉（2026年11月に追加）
+
+採用ボードは、開くと最初に合言葉の画面が出ます（README.md の20-1）。
+
+### 14-1. 守ること
+
+- **合言葉そのものを、このファイル・README.md・ページのファイル・GitHub・依頼者への説明文に書かない。** 合言葉は採用担当者が口頭で伝える。
+- ページのファイルには、合言葉に `saiyo-board-gate:` を前に付けた文字の SHA-256 のハッシュだけを、`GATE_HASH` として書いている。
+- 依頼者には「この確認はブラウザーの中で行うため、くわしい人なら飛ばせる。本格的な鍵ではない」ことを説明済み。これを「安全な鍵」と説明しない。
+
+### 14-2. 合言葉を変えるとき（依頼者に頼まれたら）
+
+1. 新しい合言葉を、`saiyo-board-gate:新しい合言葉` という文字にして、SHA-256 のハッシュ（英数字64文字）を計算する。
+   - 例（Python）：`python3 -c "import hashlib;print(hashlib.sha256('saiyo-board-gate:新しい合言葉'.encode()).hexdigest())"`
+2. `saiyo-board.html` の `const GATE_HASH = '……';` の中身を、計算したハッシュに置き換える。ほかは変えない。
+3. 公開ページを更新する。
+4. 依頼者に、変わったことと、GitHub に上げれば Cloudflare の見本も変わることを伝える。新しい合言葉を説明文に書き戻さない。
+
+### 14-3. 仕組み
+
+| 項目 | 内容 |
+|---|---|
+| 解除の記録 | ブラウザーの `sessionStorage`（そのタブを閉じると消える）に、キー `saiyo-board-unlocked` で保存 |
+| 間違えた回数 | `sessionStorage` のキー `saiyo-board-gate-fails` に保存。5回で1分間入力できない |
+| データの読み込み | 合言葉が正しいと分かってから `startApp()` を呼び、そこで初めてデータを読み込む |
+| ロック | 画面右上の「🔒 ロックする」で `sessionStorage` の解除の記録を消し、開いているダイアログを閉じて、合言葉の画面に戻す |

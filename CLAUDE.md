@@ -221,7 +221,7 @@ GitHub の画面は、日本語で表示されることも、英語で表示さ�
 | リポジトリのURL | https://github.com/mitsuo-tsuji/saiyo-board |
 | ファイルを上げる画面のURL | https://github.com/mitsuo-tsuji/saiyo-board/upload |
 | 設定の画面のURL | https://github.com/mitsuo-tsuji/saiyo-board/settings |
-| 公開の設定 | 非公開（Private）。依頼者と、依頼者が招待した人だけが見られる |
+| 公開の設定 | **公開（Public）**（2026年11月に依頼者が非公開から変更）。だれでも中身を読める。合言葉のハッシュも見えるので、合言葉は割り出せる前提で扱う |
 | ブランチ | main |
 | 入れているファイル | README.md、CLAUDE.md、saiyo-board.html の3つ |
 | 手元のフォルダー | `C:\Users\tsuji\Desktop\claude研修\第07回` |

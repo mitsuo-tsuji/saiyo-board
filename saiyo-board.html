@@ -9,8 +9,9 @@
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#F2F8F6; --surface:#FFFFFF; --surface2:#F7FBFA; --ink:#1D2A30; --muted:#5C6C73; --line:#D9E6E3;
-  --primary:#0B8F80; --primary-ink:#FFFFFF; --primary-soft:#DDF3EF; --star:#F2AE00; --danger:#D23F3F;
+  --bg:#F3F9FD; --surface:#FFFFFF; --surface2:#F6FAFD; --ink:#14304A; --muted:#55708A; --line:#D4E5F0;
+  --brand:#00A0E9; --brand-ink:#FFFFFF; --zebra:#F1F8FD;
+  --primary:#0077B6; --primary-ink:#FFFFFF; --primary-soft:#E1F3FC; --star:#F2AE00; --danger:#D23F3F;
   --soon:#FFF1C2; --soon-ink:#6E5000; --warn:#FFE3DC; --warn-ink:#8A2E16; --shadow:0 2px 0 rgba(29,42,48,.06);
   --s-doc:#4C84F0; --s-first:#8A63E8; --s-final:#E9821C; --s-offer:#1FA25C; --s-out:#8C97A3;
   color-scheme:light;
@@ -20,16 +21,18 @@
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#11181A; --surface:#1A2326; --surface2:#162023; --ink:#E6EFED; --muted:#9AADAD; --line:#2A393B;
-    --primary:#2BC1AE; --primary-ink:#06231F; --primary-soft:#173A36; --star:#FFC93D; --danger:#FF7676;
+    --bg:#0D1924; --surface:#142534; --surface2:#11212F; --ink:#E3EFF8; --muted:#97B0C4; --line:#253A4C;
+    --brand:#0A6A9C; --brand-ink:#FFFFFF; --zebra:#172B3B;
+    --primary:#45B8EE; --primary-ink:#04202F; --primary-soft:#15384F; --star:#FFC93D; --danger:#FF7676;
     --soon:#433A16; --soon-ink:#FFE08A; --warn:#4A2A22; --warn-ink:#FFC2B0; --shadow:none;
     --s-doc:#6F9CFF; --s-first:#A88BFF; --s-final:#FFA14A; --s-offer:#3FCB7E; --s-out:#8C97A3;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#11181A; --surface:#1A2326; --surface2:#162023; --ink:#E6EFED; --muted:#9AADAD; --line:#2A393B;
-  --primary:#2BC1AE; --primary-ink:#06231F; --primary-soft:#173A36; --star:#FFC93D; --danger:#FF7676;
+  --bg:#0D1924; --surface:#142534; --surface2:#11212F; --ink:#E3EFF8; --muted:#97B0C4; --line:#253A4C;
+    --brand:#0A6A9C; --brand-ink:#FFFFFF; --zebra:#172B3B;
+  --primary:#45B8EE; --primary-ink:#04202F; --primary-soft:#15384F; --star:#FFC93D; --danger:#FF7676;
   --soon:#433A16; --soon-ink:#FFE08A; --warn:#4A2A22; --warn-ink:#FFC2B0; --shadow:none;
   --s-doc:#6F9CFF; --s-first:#A88BFF; --s-final:#FFA14A; --s-offer:#3FCB7E; --s-out:#8C97A3;
   color-scheme:dark;
@@ -45,7 +48,16 @@ button,input,select,textarea{font:inherit;color:inherit}
 .wrap{max-width:1240px;margin:0 auto;padding:20px 16px 48px}
 a{color:var(--primary)}
 
-header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
+.brandbar{background:var(--brand);color:var(--brand-ink)}
+.brandbar header.top{max-width:1240px;margin:0 auto;padding:16px 16px 18px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.brandbar h1{color:var(--brand-ink)}
+.brandbar .sub{color:var(--brand-ink);opacity:.92}
+.brandbar .btn{background:transparent;color:var(--brand-ink);border-color:rgba(255,255,255,.75)}
+.brandbar .btn:hover{background:rgba(255,255,255,.14)}
+.brandbar .btn.primary{background:#FFFFFF;color:#0077B6;border-color:#FFFFFF}
+.brandbar .btn.primary:hover{filter:none;background:#EAF6FD}
+.brandbar :focus-visible{outline-color:#FFFFFF}
+body.locked .brandbar{display:none!important}
 h1{margin:0;font-size:30px;font-weight:800;letter-spacing:.02em;line-height:1.2}
 .sub{margin:4px 0 0;color:var(--muted);font-size:14px}
 .hbtns{display:flex;gap:8px;flex-wrap:wrap}
@@ -103,9 +115,14 @@ table{width:100%;border-collapse:collapse;min-width:1120px}
 th{text-align:left;font-size:13px;font-weight:700;color:var(--muted);padding:12px 14px;border-bottom:1.5px solid var(--line);background:var(--surface2);white-space:nowrap}
 td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:middle;font-size:14px}
 tbody tr{cursor:pointer}
-tbody tr:hover{background:var(--surface2)}
+tbody tr:nth-child(even){background:var(--zebra)}
+tbody tr:hover{background:var(--primary-soft)}
+th:first-child,td:first-child{min-width:170px}
 tbody tr:last-child td{border-bottom:0}
 .nm{font-weight:700;font-size:15px}
+td .nm{font-size:17px;font-weight:800;color:var(--ink);white-space:nowrap;line-height:1.35}
+td .kana{line-height:1.3;margin-bottom:1px}
+td .flag{margin:4px 0 0}
 .kana{font-size:12px;color:var(--muted)}
 .muted{color:var(--muted)}
 .small{font-size:12px}
@@ -250,6 +267,11 @@ label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bot
 .file{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:4px 6px 4px 10px;max-width:100%}
 .file a{color:var(--ink);font-weight:700;font-size:13px;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
 .file a:hover{text-decoration:underline}
+.fileopen{border:0;background:transparent;padding:0;cursor:pointer;color:var(--ink);font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px;text-align:left}
+.fileopen:hover{text-decoration:underline;color:var(--primary)}
+dialog.viewer{width:min(960px,calc(100vw - 24px))}
+.viewbody{background:var(--surface2);padding:12px;overflow:auto;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;gap:12px;min-height:200px}
+.viewbody img,.viewbody canvas{max-width:100%;height:auto;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.15);border-radius:4px}
 .ft{font-size:10px;font-weight:800;color:var(--primary);background:var(--primary-soft);border-radius:4px;padding:0 4px;margin-right:4px}
 .rm{border:0;background:transparent;cursor:pointer;color:var(--muted);font-size:16px;line-height:1;padding:2px 4px;border-radius:6px}
 .addfile{border:1.5px dashed var(--primary);background:transparent;color:var(--primary);border-radius:10px;padding:5px 12px;font-size:13px;font-weight:700;cursor:pointer}
@@ -266,6 +288,9 @@ body.locked .wrap,body.locked dialog{display:none!important}
 .lockcard input{width:100%;text-align:center;font-size:22px;letter-spacing:.4em;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface2)}
 .lockcard .btn{width:100%;margin-top:12px;padding:11px 18px}
 .lockcard .err{text-align:left}
+.logchg{font-size:12px;color:var(--muted);margin-top:2px;white-space:pre-wrap;word-break:break-all}
+.logact{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--primary-soft);color:var(--ink);white-space:nowrap}
+.logact.del{background:var(--warn);color:var(--warn-ink)}
 @media (max-width:700px){
   h1{font-size:25px}
   .grid,.mgrid{grid-template-columns:1fr}
@@ -286,7 +311,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
     <button class="btn primary" type="submit" id="lockGo">開く</button>
   </form>
 </div>
-<div class="wrap">
+<div class="brandbar">
   <header class="top">
     <div>
       <h1>採用ボード</h1>
@@ -299,6 +324,8 @@ body.locked .wrap,body.locked dialog{display:none!important}
       <button class="btn primary" id="addBtn" type="button">＋ 応募者を追加</button>
     </div>
   </header>
+</div>
+<div class="wrap">
 
   <nav class="tabs" id="tabs" role="tablist" aria-label="画面の切り替え">
     <button type="button" role="tab" data-tab="apps">応募者</button>
@@ -306,6 +333,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
     <button type="button" role="tab" data-tab="agents">エージェント</button>
     <button type="button" role="tab" data-tab="stats" hidden>集計</button>
     <button type="button" role="tab" data-tab="mail">メール</button>
+    <button type="button" role="tab" data-tab="logs">記録</button>
   </nav>
 
   <div class="banner" id="banner" role="status"></div>
@@ -339,6 +367,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
   <section id="tab-agents" hidden></section>
   <section id="tab-stats" hidden></section>
   <section id="tab-mail" hidden></section>
+  <section id="tab-logs" hidden></section>
 </div>
 
 <!-- applicant -->
@@ -438,6 +467,16 @@ body.locked .wrap,body.locked dialog{display:none!important}
       </div>
     </footer>
   </form>
+</dialog>
+
+<!-- file viewer -->
+<dialog id="viewDlg" class="viewer" aria-labelledby="viewTitle">
+  <div class="dlg">
+    <header><h2 id="viewTitle" style="font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">書類を見る</h2><button class="x" type="button" data-close aria-label="閉じる">×</button></header>
+    <p class="small muted" id="viewStatus" aria-live="polite" style="margin:0 22px 8px"></p>
+    <div class="viewbody" id="viewBody"></div>
+    <footer><span></span><button class="btn ghost" type="button" data-close>閉じる</button></footer>
+  </div>
 </dialog>
 
 <!-- read from PDF / image -->
@@ -567,6 +606,8 @@ body.locked .wrap,body.locked dialog{display:none!important}
     {k:'closed',label:'終了',c:'var(--s-out)'}
   ];
   const KINDS = [{k:'resume',label:'履歴書'},{k:'career',label:'職務経歴書'},{k:'other',label:'その他'}];
+  // the list column shows only these two; all qualifications stay in the form, filter and search
+  const LIST_QUALS = ['1級建築施工管理','1級建築士'];
   const QUALS = ['1級建築士','2級建築士','1級建築施工管理','2級建築施工管理','宅建','建設業経理士1級','建設業経理士2級','サービス管理者'];
   const DUR = 60, STALE_DAYS = 7, SOON_DAYS = 3, CAL = 'Google Calendar';
   const DAY = 86400000;
@@ -574,7 +615,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
   const jobSt = k => JOB_ST.find(s => s.k === k) || JOB_ST[0];
 
   // ================= state =================
-  const S = { apps:[], jobs:[], agents:[], tpls:[], settings:{}, prefs:{}, members:{}, revAll:{}, revMine:{},
+  const S = { apps:[], jobs:[], agents:[], tpls:[], settings:{}, prefs:{}, members:{}, revAll:{}, revMine:{}, logs:[],
     loaded:false, tab:'apps', view:'list', q:'', fJob:'', fSrc:'', fQual:'', fStage:'', sort:'updated', range:'3m',
     readOnly:false, admin:false, editing:null, tplEdit:null };
   let db=null, user=null, assets=null, mcp=null, sample=null, sampleImg=null, myId=null, localMode=false;
@@ -701,7 +742,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
     statsBtn.hidden = !S.admin;
     if(S.tab === 'stats' && !S.admin) S.tab = 'apps';
     document.querySelectorAll('#tabs [data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === S.tab)));
-    ['apps','jobs','agents','stats','mail'].forEach(t => $('tab-'+t).hidden = t !== S.tab);
+    ['apps','jobs','agents','stats','mail','logs'].forEach(t => $('tab-'+t).hidden = t !== S.tab);
 
     const add = $('addBtn');
     const label = {apps:'＋ 応募者を追加', jobs:'＋ 求人を追加', agents:'＋ エージェントを追加'}[S.tab];
@@ -717,6 +758,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
     else if(S.tab === 'agents') renderAgents();
     else if(S.tab === 'stats') renderStats();
     else if(S.tab === 'mail') renderMail();
+    else if(S.tab === 'logs') renderLogs();
   }
 
   // ---------- applicants ----------
@@ -800,9 +842,9 @@ body.locked .wrap,body.locked dialog{display:none!important}
     let h = '<div class="panel"><div class="scroll"><table><thead><tr><th>氏名</th><th>年齢</th><th>資格</th><th>応募求人</th><th>応募経路</th><th>選考ステータス</th><th>次の面接</th>'+(S.admin?'<th>評価</th>':'')+'<th>書類</th><th>最終更新</th></tr></thead><tbody>';
     rows.forEach(a => {
       h += '<tr tabindex="0" data-open="'+esc(a.id)+'">'
-        + '<td><div class="nm">'+esc(a.name)+(isStale(a)?'<span class="flag">'+STALE_DAYS+'日以上動きなし</span>':'')+'</div>'+(a.kana?'<div class="kana">'+esc(a.kana)+'</div>':'')+'</td>'
+        + '<td>'+(a.kana?'<div class="kana">'+esc(a.kana)+'</div>':'')+'<div class="nm">'+esc(a.name)+'</div>'+(isStale(a)?'<div class="flag">'+STALE_DAYS+'日以上動きなし</div>':'')+'</td>'
         + '<td>'+(ageOf(a)!=null?esc(ageOf(a))+'歳':'<span class="muted">—</span>')+'</td>'
-        + '<td>'+((qualsOf(a).length||a.qualOther)?qualsOf(a).map(q => '<span class="tag q">'+esc(q)+'</span>').join('')+(a.qualOther?'<span class="tag q" title="その他の資格">'+esc(a.qualOther)+'</span>':''):'<span class="muted">—</span>')+'</td>'
+        + '<td>'+(LIST_QUALS.filter(q => qualsOf(a).includes(q)).map(q => '<span class="tag q">'+esc(q)+'</span>').join('') || '<span class="muted">—</span>')+'</td>'
         + '<td>'+(jobLabel(a)?esc(jobLabel(a)):'<span class="muted">—</span>')+'</td>'
         + '<td>'+srcHTML(a)+'</td>'
         + '<td>'+trackHTML(a.stage)+'</td>'
@@ -1011,6 +1053,88 @@ body.locked .wrap,body.locked dialog{display:none!important}
     else if(code === 'resource_exhausted') banner('操作が集中しています。少し待ってから、もう一度保存してください。');
     else banner('保存できませんでした。通信状況を確認して、もう一度保存してください。');
   }
+
+  // ================= operation log (README 24-19) =================
+  // Who did what, when, to which applicant. Visible to everyone the board is shared with.
+  // Field changes keep before/after values (cut to 100 chars), except salary: field names only.
+  const LOG_DAYS = 365;
+  const LOG_ACTIONS = { open:'ボードを開いた', create:'応募者を追加', update:'応募者を書き換え', delete:'応募者を削除', stage:'選考段階を変更',
+    salary_open:'給与条件を開いた', salary_update:'給与条件を書き換え', file_add:'書類を添付', file_open:'書類を開いた', file_remove:'書類を外した', review:'評価を書いた' };
+  const LOG_FIELDS = [['name','氏名'],['kana','ふりがな'],['birthDate','生年月日'],['phone','電話番号'],['postal','郵便番号'],['address','住所'],['email','メールアドレス'],
+    ['quals','資格'],['qualOther','その他の資格'],['jobId','応募求人'],['source','応募経路'],['appliedAt','応募日'],['agentId','エージェント会社'],['agentComment','推薦コメント'],['memo','共有メモ']];
+  let logQueue = [];
+  const cut = v => { const t = String(v == null ? '' : v); return t.length > 100 ? t.slice(0,100) + '…' : t; };
+  function fieldText(k, v){
+    if(k === 'quals') return Array.isArray(v) ? v.join('、') : '';
+    if(k === 'jobId'){ const j = S.jobs.find(x => x.id === v); return j ? j.title : (v ? '（削除された求人）' : ''); }
+    if(k === 'agentId'){ const g = S.agents.find(x => x.id === v); return g ? g.name : (v ? '（削除された会社）' : ''); }
+    return v == null ? '' : String(v);
+  }
+  function diffApplicant(prev, next){
+    const out = [];
+    LOG_FIELDS.forEach(([k,label]) => { const a = fieldText(k, prev[k]), b = fieldText(k, next[k]); if(a !== b) out.push({label, from:cut(a), to:cut(b)}); });
+    const pr = roundsOf(prev), nr = next.rounds || {};
+    ROUNDS.forEach(x => { const a = (pr[x.k] && pr[x.k].at) || '', b = (nr[x.k] && nr[x.k].at) || ''; if(a !== b) out.push({label:x.label+'の日時', from:a ? fmtDT(a) : '', to:b ? fmtDT(b) : ''});
+      const ai = ((pr[x.k] && pr[x.k].interviewers) || []).length, bi = ((nr[x.k] && nr[x.k].interviewers) || []).length; if(ai !== bi) out.push({label:x.label+'の面接官', from:ai+'名', to:bi+'名'}); });
+    return out;
+  }
+  function logEvent(action, appId, appName, extra){
+    const rec = Object.assign({at:Date.now(), action, app:appId || '', appName:cut(appName || '')}, extra || {});
+    if(myId) rec.by = myId;
+    if(localMode){ S.logs.unshift(Object.assign({id:'l'+Date.now()+Math.random()}, rec)); if(S.tab === 'logs') renderLogs(); return; }
+    if(!db){ logQueue.push(rec); return; }
+    db.collection('logs').doc().set(rec).catch(() => {});
+  }
+  function flushLogs(){ const q = logQueue; logQueue = []; q.forEach(r => { if(myId && !r.by) r.by = myId; if(localMode) S.logs.unshift(Object.assign({id:'l'+Math.random()}, r)); else if(db) db.collection('logs').doc().set(r).catch(()=>{}); }); }
+  async function pruneLogs(){
+    if(!db || localMode || !S.admin) return;
+    const cutoff = Date.now() - LOG_DAYS*DAY;
+    try { const snap = await db.collection('logs').where('at','<',cutoff).limit(200).get();
+      for(const d of snap.docs){ await db.collection('logs').doc(d.id).delete().catch(()=>{}); } } catch(e){}
+  }
+  const LS = { who:'', act:'', range:'7', q:'' };
+  function renderLogs(){
+    const el = $('tab-logs');
+    if(el.contains(document.activeElement) && document.activeElement.matches('input')) { paintLogRows(); return; }
+    const uids = [...new Set(S.logs.map(l => l.by).filter(Boolean))];
+    let h = '<div class="sectionhead"><p>だれが・いつ・どの応募者に・何をしたかの記録です。1年より古い記録は自動で消えます。給与条件は、変えた項目の名前だけを記録しています。</p></div>'
+      + '<div class="toolbar">'
+      + '<div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="logQ" type="search" placeholder="応募者の名前・内容で検索" aria-label="記録を検索" value="'+esc(LS.q)+'"></div>'
+      + '<select id="logWho" aria-label="人で絞り込み"><option value="">すべての人</option>'+uids.map(u => '<option value="'+esc(u)+'"'+(u===LS.who?' selected':'')+' data-uid="'+esc(u)+'">'+(u===myId?'あなた':'メンバー')+'</option>').join('')+'</select>'
+      + '<select id="logAct" aria-label="操作で絞り込み"><option value="">すべての操作</option>'+Object.keys(LOG_ACTIONS).map(k => '<option value="'+k+'"'+(k===LS.act?' selected':'')+'>'+LOG_ACTIONS[k]+'</option>').join('')+'</select>'
+      + '<select id="logRange" aria-label="期間">'+[['1','今日'],['7','7日間'],['30','30日間'],['all','すべて']].map(o => '<option value="'+o[0]+'"'+(o[0]===LS.range?' selected':'')+'>'+o[1]+'</option>').join('')+'</select>'
+      + '</div><div id="logRows"></div>';
+    el.innerHTML = h;
+    resolveNames(el);
+    paintLogRows();
+  }
+  function paintLogRows(){
+    const box = $('logRows'); if(!box) return;
+    const now = Date.now(), q = LS.q.trim().toLowerCase();
+    const start = LS.range === 'all' ? 0 : (LS.range === '1' ? new Date(new Date().setHours(0,0,0,0)).getTime() : now - (+LS.range)*DAY);
+    const rows = S.logs.filter(l => (l.at||0) >= start && (!LS.who || l.by === LS.who) && (!LS.act || l.action === LS.act)
+      && (!q || [l.appName, l.detail, ...(l.changes||[]).map(c => c.label+c.from+c.to)].join(' ').toLowerCase().includes(q))).slice(0, 500);
+    if(!S.loaded){ box.innerHTML = '<div class="panel state">読み込み中…</div>'; return; }
+    if(!rows.length){ box.innerHTML = '<div class="panel state"><strong>記録がありません</strong>期間や絞り込みを変えてみてください。</div>'; return; }
+    let h = '<div class="panel"><div class="scroll"><table style="min-width:760px"><thead><tr><th>日時</th><th>人</th><th>操作</th><th>応募者</th><th>内容</th></tr></thead><tbody>';
+    rows.forEach(l => {
+      const d = new Date(l.at||0);
+      const chg = (l.changes||[]).map(c => c.label + (c.hideValues ? '' : '：' + (c.from || '（空欄）') + ' → ' + (c.to || '（空欄）'))).join('\n');
+      h += '<tr style="cursor:default"><td class="small" style="white-space:nowrap">'+d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+pad(d.getHours())+':'+pad(d.getMinutes())+'</td>'
+        + '<td class="small">'+(l.by?'<span data-uid="'+esc(l.by)+'"></span>':'<span class="muted">—</span>')+'</td>'
+        + '<td><span class="logact'+(l.action==='delete'||l.action==='file_remove'?' del':'')+'">'+esc(LOG_ACTIONS[l.action]||l.action)+'</span></td>'
+        + '<td>'+(l.appName?esc(l.appName):'<span class="muted">—</span>')+'</td>'
+        + '<td>'+(l.detail?'<div class="small">'+esc(l.detail)+'</div>':'')+(chg?'<div class="logchg">'+esc(chg)+'</div>':'')+(!l.detail&&!chg?'<span class="muted">—</span>':'')+'</td></tr>';
+    });
+    box.innerHTML = h + '</tbody></table></div></div>' + (rows.length === 500 ? '<p class="hint">新しい順に500件まで表示しています。絞り込むと、さらに前の記録も見られます。</p>' : '');
+    resolveNames(box);
+  }
+  $('tab-logs').addEventListener('input', e => { if(e.target.id === 'logQ'){ LS.q = e.target.value; paintLogRows(); } });
+  $('tab-logs').addEventListener('change', e => {
+    if(e.target.id === 'logWho'){ LS.who = e.target.value; paintLogRows(); }
+    if(e.target.id === 'logAct'){ LS.act = e.target.value; paintLogRows(); }
+    if(e.target.id === 'logRange'){ LS.range = e.target.value; paintLogRows(); }
+  });
 
   // ================= applicant dialog =================
   const dlg = $('dlg');
@@ -1275,6 +1399,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
       items[S.editing+'__'+r] = {app:S.editing, round:r, rating:formRev[r].rating||0, comment:formRev[r].comment||'', at:Date.now()};
       sv.disabled = true;
       try { await db.doc('reviews/'+myId).set({items, updatedAt:Date.now()});
+        logEvent('review', S.editing, (S.apps.find(x => x.id === S.editing) || {}).name || '', {detail: (ROUNDS.find(x => x.k === r) || {label:r}).label});
         const d = document.querySelector('[data-revdone="'+r+'"]'); if(d){ d.textContent = '保存しました'; setTimeout(() => { d.textContent = ''; }, 2500); } }
       catch(err){ writeError(err); }
       sv.disabled = false;
@@ -1294,7 +1419,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
       const files = formAtt.filter(f => f.kind === k.k);
       let h = '<div class="docrow"><div class="dk">'+k.label+'</div><div class="dfiles">';
       files.forEach(f => {
-        h += '<span class="file"><a href="/_blob/'+esc(f.id)+'" target="_blank" rel="noopener"><span class="ft">'+(f.type==='application/pdf'?'PDF':'画像')+'</span>'+esc(f.name)+'</a><span class="muted small">'+fmtSize(f.size)+'</span>'
+        h += '<span class="file"><button type="button" class="fileopen" data-viewf="'+esc(f.id)+'" title="押すと画面の中で開きます"><span class="ft">'+(f.type==='application/pdf'?'PDF':'画像')+'</span>'+esc(f.name)+'</button><span class="muted small">'+fmtSize(f.size)+'</span>'
           + (up?'<button type="button" class="rm" data-rmf="'+esc(f.id)+'" aria-label="'+esc(f.name)+'を外す">×</button>':'')+'</span>';
       });
       if(!files.length && !up) h += '<span class="muted small" style="padding-top:6px">未添付</span>';
@@ -1311,10 +1436,50 @@ body.locked .wrap,body.locked dialog{display:none!important}
     if(c==='rate_limited') return '操作が集中しています。少し待ってから、もう一度添付してください。';
     if(c==='not_granted'||c==='capability_disabled'||c==='capability_removed') return 'この画面では書類を添付できません。';
     return '添付できませんでした。通信状況を確認して、もう一度お試しください。'; }
+  // ---------- in-page file viewer (links that open new tabs do not work inside the published page) ----------
+  const viewDlg = $('viewDlg');
+  let viewSeq = 0;
+  viewDlg.addEventListener('click', e => { if(e.target === viewDlg || e.target.closest('[data-close]')){ viewSeq++; viewDlg.close(); } });
+  viewDlg.addEventListener('close', () => { viewSeq++; $('viewBody').innerHTML = ''; });
+  async function openViewer(f){
+    const seq = ++viewSeq, body = $('viewBody'), st = $('viewStatus');
+    $('viewTitle').textContent = f.name || '書類'; body.innerHTML = ''; st.textContent = '読み込んでいます…';
+    viewDlg.showModal();
+    const src = '/_blob/' + f.id;
+    const fail = () => { if(seq === viewSeq) st.textContent = 'この書類を表示できませんでした。会社のアカウントで claude.ai にログインしているか確認し、ページを開き直してください。'; };
+    try {
+      if(f.type !== 'application/pdf'){
+        const img = new Image(); img.alt = f.name || '書類';
+        img.onload = () => { if(seq === viewSeq) st.textContent = ''; };
+        img.onerror = fail; img.src = src; body.appendChild(img); return;
+      }
+      const res = await fetch(src, {credentials:'include'});
+      if(!res.ok) throw new Error('http');
+      const buf = new Uint8Array(await res.arrayBuffer());
+      if(seq !== viewSeq) return;
+      const lib = await loadPdfjs();
+      const pdf = await lib.getDocument({data: buf}).promise;
+      const n = Math.min(pdf.numPages, 20);
+      for(let i = 1; i <= n; i++){
+        if(seq !== viewSeq) return;
+        st.textContent = 'ページを表示しています（' + i + '／' + n + '）…';
+        const page = await pdf.getPage(i), v1 = page.getViewport({scale:1});
+        const scale = Math.min(2, 1400 / v1.width), vp = page.getViewport({scale});
+        const c = document.createElement('canvas'); c.width = Math.ceil(vp.width); c.height = Math.ceil(vp.height);
+        c.setAttribute('aria-label', (f.name || '書類') + ' ' + i + 'ページ目');
+        body.appendChild(c);
+        await page.render({canvasContext: c.getContext('2d'), viewport: vp}).promise;
+      }
+      if(seq === viewSeq) st.textContent = pdf.numPages > 20 ? '全' + pdf.numPages + 'ページのうち、最初の20ページを表示しています。' : '';
+    } catch(err){ fail(); }
+  }
+
   $('docs').addEventListener('click', async e => {
+    const vf = e.target.closest('[data-viewf]');
+    if(vf){ const f = formAtt.find(x => x.id === vf.dataset.viewf); if(f){ openViewer(f); logEvent('file_open', S.editing, (S.editing ? ((S.apps.find(x => x.id === S.editing) || {}).name || '') : $('name').value.trim()), {detail: f.name}); } return; }
     const add = e.target.closest('.addfile'); if(add){ pickKind = add.dataset.kind; $('fileIn').value=''; $('fileIn').click(); return; }
     const rm = e.target.closest('[data-rmf]');
-    if(rm){ const id = rm.dataset.rmf; formAtt = formAtt.filter(f => f.id !== id); paintDocs(); await persistPatch({attachments: formAtt.slice()}); if(assets) assets.delete(id).catch(()=>{}); }
+    if(rm){ const id = rm.dataset.rmf; const rf = formAtt.find(f => f.id === id); if(rf) logEvent('file_remove', S.editing, (S.editing ? ((S.apps.find(x => x.id === S.editing) || {}).name || '') : $('name').value.trim()), {detail: rf.name}); formAtt = formAtt.filter(f => f.id !== id); paintDocs(); await persistPatch({attachments: formAtt.slice()}); if(assets) assets.delete(id).catch(()=>{}); }
   });
   $('fileIn').addEventListener('change', async e => {
     const f = e.target.files && e.target.files[0]; if(!f || !pickKind || !assets) return;
@@ -1324,7 +1489,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
     const kind = pickKind; uploading = kind; paintDocs();
     try { const r = await assets.upload(f, {type});
       const att = {id:r.id, kind, name:f.name, size:r.sizeBytes, type:r.contentType, at:Date.now()}; if(myId) att.by = myId;
-      formAtt.push(att); uploading = null; paintDocs(); await persistPatch({attachments: formAtt.slice()}); }
+      formAtt.push(att); uploading = null; paintDocs(); logEvent('file_add', S.editing, (S.editing ? ((S.apps.find(x => x.id === S.editing) || {}).name || '') : $('name').value.trim()), {detail: (KINDS.find(k => k.k === kind)||{}).label + '：' + f.name}); await persistPatch({attachments: formAtt.slice()}); }
     catch(err){ docErr(uploadErrMsg(err)); }
     finally { uploading = null; paintDocs(); }
   });
@@ -1341,6 +1506,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
   const SAL_HASH = 'd35fa29f63bbeb69caf40f6fb30d8dbaab1de1d06c43dfb6e3a64edd38eb89bb';
   const SAL_FAIL_KEY = 'saiyo-board-salary-fails';
   const SAL_FIELDS = [['current','salCurrent'],['desired','salDesired'],['offer','salOffer'],['memo','salMemo']];
+  const SAL_LABELS = {current:'現在の給与', desired:'希望の給与', offer:'提示する給与', memo:'給与のメモ'};
   let salOpen = false, salLoaded = null, salFails = 0, salUntil = 0, salTimer = null;
   const localSal = {};
   try { const f = JSON.parse(sessionStorage.getItem(SAL_FAIL_KEY) || '{}'); salFails = f.n || 0; salUntil = f.until || 0; } catch(e){}
@@ -1384,6 +1550,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
     if(S.editing !== forId || !dlg.open) return;
     salLoaded = {}; SAL_FIELDS.forEach(([k,id]) => { salLoaded[k] = data[k] || ''; $(id).value = salLoaded[k]; $(id).disabled = S.readOnly; });
     salOpen = true; $('salLocked').hidden = true; $('salOpenBox').hidden = false;
+    logEvent('salary_open', forId, forId ? ((S.apps.find(x => x.id === forId) || {}).name || '') : $('name').value.trim());
     $('salNote').textContent = S.readOnly ? '閲覧のみのため、書き換えはできません。' : '「保存する」を押すと、ほかの項目と一緒に保存されます。';
   }
   $('salOpen').addEventListener('click', salUnlock);
@@ -1474,8 +1641,10 @@ body.locked .wrap,body.locked dialog{display:none!important}
     const b = $('delBtn');
     if(!b.classList.contains('armed')){ b.classList.add('armed'); b.textContent='もう一度押すと削除'; delTimer = setTimeout(resetDel, 3500); return; }
     const id = S.editing, files = formAtt.slice(); formAtt = [];
+    const delName = (S.apps.find(x => x.id === id) || {}).name || '';
     if(dlg.open) dlg.close(); S.editing = null; resetDel();
     if(id && await deleteDoc('applicants', id)){
+      logEvent('delete', id, delName);
       if(db && !localMode) db.doc('salaries/' + id).delete().catch(()=>{}); else delete localSal[id];
       if(assets) files.forEach(f => assets.delete(f.id).catch(()=>{}));
       if(myId && db && !localMode){ const items = Object.assign({}, myItems()); let ch = false; Object.keys(items).forEach(k => { if(k.startsWith(id+'__')){ delete items[k]; ch = true; } }); if(ch) db.doc('reviews/'+myId).set({items, updatedAt:Date.now()}).catch(()=>{}); }
@@ -1525,8 +1694,18 @@ body.locked .wrap,body.locked dialog{display:none!important}
     };
     const id = S.editing || newId('applicants');
     $('saveBtn').disabled = true;
+    const salChanged = salOpen && !S.readOnly ? SAL_FIELDS.filter(([k,fid]) => $(fid).value.trim() !== (salLoaded ? salLoaded[k] : '')).map(([k]) => SAL_LABELS[k]) : [];
     let ok = await saveApplicant(id, data);
     if(ok) ok = await salPersist(id);
+    if(ok){
+      if(!prev) logEvent('create', id, name);
+      else {
+        const changes = diffApplicant(prev, data);
+        if(changes.length) logEvent('update', id, name, {changes});
+        if((prev.stage||'doc') !== data.stage) logEvent('stage', id, name, {detail: stageOf(prev.stage).label + ' → ' + stageOf(data.stage).label});
+      }
+      if(salChanged.length) logEvent('salary_update', id, name, {changes: salChanged.map(l => ({label:l, hideValues:true}))});
+    }
     $('saveBtn').disabled = false;
     if(ok){ formAtt = []; closeForm(); banner(''); }
   });
@@ -1631,7 +1810,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
         uploading = kind; paintDocs();
         try { const up = await assets.upload(f, {type});
           const att = {id:up.id, kind, name:f.name, size:up.sizeBytes, type:up.contentType, at:Date.now()}; if(myId) att.by = myId;
-          if(dlg.open && !S.editing) formAtt.push(att); else assets.delete(up.id).catch(()=>{});
+          if(dlg.open && !S.editing){ formAtt.push(att); logEvent('file_add', '', $('name').value.trim(), {detail: (KINDS.find(k => k.k === kind)||{}).label + '：' + f.name + '（書類から読み取り）'}); } else assets.delete(up.id).catch(()=>{});
         } catch(err){ docErr('書類の自動添付ができませんでした：' + uploadErrMsg(err)); }
         finally { uploading = null; if(dlg.open) paintDocs(); }
       } else docErr('この画面では書類を自動で添付できません。必要なら、あとで添付してください。');
@@ -1875,11 +2054,11 @@ body.locked .wrap,body.locked dialog{display:none!important}
     const id = e.dataTransfer.getData('text/plain'); const a = S.apps.find(x => x.id === id);
     if(!a || (a.stage||'doc') === col.dataset.drop) return;
     const stage = col.dataset.drop;
-    await saveApplicant(id, Object.assign({}, a, {stage, reached: Math.max(reachedOf(a), FLOW.indexOf(stage))}));
+    if(await saveApplicant(id, Object.assign({}, a, {stage, reached: Math.max(reachedOf(a), FLOW.indexOf(stage))}))) logEvent('stage', id, a.name, {detail: stageOf(a.stage).label + ' → ' + stageOf(stage).label + '（ボードで移動）'});
   });
 
   // ================= start =================
-  function startLocal(msg){ localMode = true; S.loaded = true; banner(msg); render(); }
+  function startLocal(msg){ localMode = true; S.loaded = true; flushLogs(); banner(msg); render(); }
   let started = false;
   function startApp(){
   if(started) return; started = true;
@@ -1904,6 +2083,8 @@ body.locked .wrap,body.locked dialog{display:none!important}
     db.collection('jobs').onSnapshot(s => { S.jobs = toList(s); render(); }, onErr);
     db.collection('agents').onSnapshot(s => { S.agents = toList(s); render(); }, onErr);
     db.collection('templates').onSnapshot(s => { S.tpls = toList(s); render(); }, onErr);
+    db.collection('logs').orderBy('at','desc').limit(2000).onSnapshot(s => { S.logs = toList(s); if(S.tab === 'logs') paintLogRows(); }, () => {});
+    flushLogs(); pruneLogs();
     db.doc('settings/main').onSnapshot(s => { S.settings = s.exists ? s.data() : {}; if(S.tab === 'mail') renderMail(); }, onErr);
     if(myId){
       db.collection('members').onSnapshot(s => { const m = {}; s.docs.forEach(d => m[d.id] = d.data() || {}); S.members = m; if(S.tab === 'mail') renderMail(); }, () => {});
@@ -1942,7 +2123,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
     };
     tick(); gateTimer = setInterval(tick, 1000);
   }
-  function unlock(){ document.body.classList.remove('locked'); $('lockInput').value = ''; gateMsg(''); startApp(); }
+  function unlock(fresh){ document.body.classList.remove('locked'); $('lockInput').value = ''; gateMsg(''); if(fresh) logEvent('open', '', ''); startApp(); }
   function lockNow(){
     ss.del(GATE_KEY);
     document.querySelectorAll('dialog[open]').forEach(d => { try { d.close(); } catch(e){} });
@@ -1959,7 +2140,7 @@ body.locked .wrap,body.locked dialog{display:none!important}
     let h = '';
     try { h = await sha256('saiyo-board-gate:' + v); } catch(err){ gateMsg('この環境では合言葉を確認できません。別のブラウザーでお試しください。'); return; }
     if(h === GATE_HASH){
-      gateFails = 0; ss.set(FAIL_KEY, JSON.stringify({n:0,until:0})); ss.set(GATE_KEY, GATE_HASH); unlock(); return;
+      gateFails = 0; ss.set(FAIL_KEY, JSON.stringify({n:0,until:0})); ss.set(GATE_KEY, GATE_HASH); unlock(true); return;
     }
     gateFails++;
     $('lockInput').value = '';

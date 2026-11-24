@@ -2065,7 +2065,15 @@ body.locked .wrap,body.locked dialog{display:none!important}
   render();
   (async () => {
     const C = window.claude;
-    if(!C || typeof C.use !== 'function'){ startLocal('この画面ではデータが保存されません。チームで使うときは claude.ai の共有リンクから開いてください。'); return; }
+    if(!C || typeof C.use !== 'function'){
+      startLocal('');
+      // sample copy (Cloudflare / GitHub / local file): point people to the real board on claude.ai
+      const b = $('banner'); b.textContent = 'この画面は見本です。データは保存されません。実際に使う採用ボードは、';
+      const a = document.createElement('a'); a.href = 'https://claude.ai/artifact/AE2iaCbyZVzkDoYA3T28Ep'; a.target = '_top'; a.rel = 'noopener'; a.textContent = 'こちら（claude.ai の採用ボード）'; a.style.fontWeight = '700';
+      b.appendChild(a); b.appendChild(document.createTextNode('から開いてください。崎山組の claude.ai のアカウントでログインしている人だけが開けます。'));
+      b.classList.add('show');
+      return;
+    }
     let dbNs = null;
     try { [dbNs, user, assets, mcp, sample] = await Promise.all([C.use('db'), C.use('user'), C.use('assets'), C.use('mcp'), C.use('sample')]); } catch(e){}
     if(sample){ try { const lm = await sample.limits(); sampleImg = (lm && lm.images) ? lm.images : null; } catch(e){ sampleImg = null; } }
